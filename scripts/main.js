@@ -11,12 +11,12 @@ const showWords = () => {
   allWordsSection.innerHTML = "";
 
   const categoryValue = document.getElementById("orderByCategoryTable").value;
+  const orderByAlphabet = document.getElementById("orderByAlphabet").value;
 
   const table = document.createElement("table");
   table.classList.add("words-table");
 
   const headerRow = document.createElement("tr");
-
   headerRow.innerHTML = `
       <th>ID</th>
       <th>English</th>
@@ -25,30 +25,45 @@ const showWords = () => {
   `;
   table.appendChild(headerRow);
 
+  const sortWords = (words) => {
+    const [key, order] = orderByAlphabet.split("-");
+    return words.sort((a, b) => {
+      const first = a[key].toLowerCase();
+      const second = b[key].toLowerCase();
+      const compare = first.localeCompare(second);
+      return order === "asc" ? compare : -compare;
+    });
+  };
 
-  if (categoryValue == "all") {
-    headerRow.innerHTML = `
-      <th>ID</th>
-      <th>English</th>
-      <th>Spanish</th>
-      <th>Example</th>
-      <th>Category</th>
-  `;
+  if (categoryValue === "all") {
+        headerRow.innerHTML = `
+        <th>ID</th>
+        <th>English</th>
+        <th>Spanish</th>
+        <th>Example</th>
+        <th>Category</th>
+    `;
+    let allWords = [];
     for (const category in dictionary.categories) {
-      dictionary.categories[category].forEach((word) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
+      allWords = allWords.concat(
+        dictionary.categories[category].map((word) => ({ ...word, category }))
+      );
+    }
+    allWords = sortWords(allWords);
+    allWords.forEach((word) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
         <td>${word.id}</td>
         <td>${word.english}</td>
         <td>${word.spanish}</td>
         <td>${word.example}</td>
-        <td>${category}</td>
+        <td>${word.category}</td>
       `;
-        table.appendChild(row);
-      });
-    }
+      table.appendChild(row);
+    });
   } else {
-    dictionary.categories[categoryValue].forEach((word) => {
+    const words = sortWords([...dictionary.categories[categoryValue]]);
+    words.forEach((word) => {
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>${word.id}</td>
@@ -59,8 +74,10 @@ const showWords = () => {
       table.appendChild(row);
     });
   }
+
   allWordsSection.appendChild(table);
-}
+};
+
 
 const renderCategory = (idSelect) => {
   const selectCategory = document.getElementById(idSelect);
@@ -137,6 +154,7 @@ const validatorWord = (wordEnglish, wordSpanish, mode) => {
 };
 
 
+
 const translaterWord = () => {
   const containerTranslate = document.getElementById("translated-word");
   containerTranslate.innerHTML = "";
@@ -144,7 +162,6 @@ const translaterWord = () => {
   const wordToTranslate = document.getElementById("wordInput").value.trim();
   const mode = document.getElementById("lenguage").value;
 
-  // Validar campos requeridos
   if (!wordToTranslate || !mode) {
     alert("Please enter a word and select a language mode!");
     return;
@@ -171,7 +188,6 @@ const translaterWord = () => {
     validator = validatorWord(undefined, wordToTranslate, "SpTEn");
   }
 
-  // Buscar coincidencias en el diccionario
   if (validator > 0) {
     for (const key in dictionary.categories) {
       dictionary.categories[key].forEach((word) => {
@@ -211,6 +227,7 @@ const translaterWord = () => {
 document.getElementById("orderByCategoryTable").addEventListener("change", () => showWords());
 document.getElementById("addWord").addEventListener("click", () => addword());
 document.getElementById("translaterButton").addEventListener("click", () => translaterWord());
+document.getElementById("orderByAlphabet").addEventListener("change", () => showWords());
 
 
 
@@ -221,6 +238,5 @@ document.addEventListener("DOMContentLoaded", () => {
   renderCategory("orderByCategoryForm");
   showWords();
 });
-
 
 

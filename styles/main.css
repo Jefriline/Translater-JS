@@ -152,13 +152,15 @@ button:hover {
     margin: 0 3%;
 }
 
+.new-word{
+    margin-top: 1rem;
+}
+
 .flds-search{
     border: none;
 }
 
-.new-word{
-    margin-top: 1rem;
-}
+
 
 @media (max-width: 768px) {
     main {

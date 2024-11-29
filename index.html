@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Translator</title>
     <link rel="stylesheet" href="styles/main.css">
 </head>
+
 <body>
     <div class="board">
         <header>
@@ -13,7 +15,7 @@
         </header>
         <main>
             <aside>
-                <form class="frm-filters"action="">
+                <form class="frm-filters" action="">
                     <fieldset class="flds-search">
                         <label for="">Word: </label>
                         <input type="text">
@@ -26,18 +28,29 @@
                         </select>
                         <button id="translater">Translater</button>
                     </fieldset>
-                    <fieldset class="flds-filters">
-                        <h2>Order by: </h2>
-                            <label for="">Category</label>
-                            <select name="" id="orderByCategory">
-                                <option value=""></option>
-                                <!-- Categories available-->
-                            </select>
-                    </fieldset>
                 </form>
             </aside>
-            <section id="allWords">
-                <!-- List of words -->
+            <section id="container-words">
+                <fieldset class="flds-filters">
+                    <label for="">Order by : </label>
+                    <label for="">Category</label>
+                    <select name="" id="orderByCategory">
+                        <option value="">Alls Words</option>
+                        <!-- Categories available-->
+                    </select>
+                    <div>
+                        <label for="orderByAlphabet">Order by: </label>
+                        <select id="orderByAlphabet">
+                          <option value="english-asc">English A-Z</option>
+                          <option value="english-desc">English Z-A</option>
+                          <option value="spanish-asc">Spanish A-Z</option>
+                          <option value="spanish-desc">Spanish Z-A</option>
+                        </select>
+                      </div>
+                </fieldset>
+                <section id="allWords">
+                    <!-- List of words -->
+                </section>
             </section>
         </main>
         <footer>
@@ -46,4 +59,5 @@
     </div>
     <script type="module" src="scripts/main.js"></script>
 </body>
+
 </html>

@@ -11,7 +11,7 @@
 <body>
     <div class="board">
         <header>
-            <h1>Translate</h1>
+            <h1>Translater</h1>
         </header>
         <main>
             <div class="left">
@@ -24,14 +24,13 @@
                             <label for="lenguage">Language: </label>
                             <select id="lenguage">
                                 <option value="">...</option>
-                                <option value="spanishToEnglish">Spanish To English</option>
-                                <option value="englishToSpanish">English To Spanish</option>
+                                <option value="SpTEn">Spanish To English</option>
+                                <option value="EnTSp">English To Spanish</option>
                             </select>
-                            <button type="button" id="translater">Translate</button>
+                            <button type="button" id="translaterButton">Translate</button>
                         </fieldset>
                     </form>
                     <section class="translation-done">
-                        <h3>Translation</h3>
                         <div id="translated-word">
                             <!-- Translation result -->
                         </div>
@@ -47,24 +46,25 @@
                             <label for="example">Example:</label>
                             <input type="text" id="example" name="example" required>
     
-                            <label for="orderByCategoryTable">Order by Category:</label>
-                            <select id="orderByCategoryTable" name="category">
+                            <label for="orderByCategoryForm">Order by Category:</label>
+                            <select id="orderByCategoryForm" name="category">
                                 <!-- Categories -->
                             </select>
     
-                            <button type="button" id="addWord">Add Word</button>
+                            <button type="submit" id="addWord">Add Word</button>
                         </form>
                     </section>
                 </aside>
             </div>
             <section id="container-words">
                 <fieldset class="flds-filters">
-                    <label for="orderByCategoryForm">Order by: </label>
-                    <label for="orderByCategoryForm">Category</label>
-                    <select id="orderByCategoryForm" name="category">
-                        <option value="">All Words</option>
+                    <div>
+                    <label for="orderByCategoryTable" id="order">Order by: </label>
+                    <select id="orderByCategoryTable" name="category">
+                        <option value="all">All Words</option>
                         <!-- Categories available -->
                     </select>
+                    </div>
                     <div>
                         <select id="orderByAlphabet">
                             <option value="english-asc">English A-Z</option>
@@ -83,12 +83,7 @@
             &copy; Made by Jefferson Lopez and Brandon Rubiano
         </footer>
 
-        <div id="alertModal" class="modal">
-            <div class="modal-content">
-                <span class="close" id="closeModal">&times;</span>
-                <p id="modalMessage"></p>
-            </div>
-        </div>
+        
     </div>
     <script type="module" src="scripts/main.js"></script>
 </body>

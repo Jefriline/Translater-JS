@@ -15,9 +15,13 @@
 }
 
 header, footer {
+    height: 10vh;
     background-color: #495057; 
     color: #ffffff; 
     padding: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -44,7 +48,11 @@ aside {
     border-radius: 8px;
     padding: 1rem;
     overflow: hidden;
-    width: 50vw;
+    width: 47vw;
+}
+
+#translaterButton{
+    margin-bottom: 3%;
 }
 
 section#allWords {
@@ -54,6 +62,7 @@ section#allWords {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 1rem;
     overflow-y: auto;
+
 }
 
 
@@ -91,8 +100,10 @@ button:hover {
 
 #container-words{
     overflow-y: scroll;
+    overflow-x: hidden;
     border: 1px solid #ccc;
     max-height: 110vh;
+    width: 100%;
 }
 
 
@@ -120,51 +131,34 @@ button:hover {
 }
 
 
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding-top: 100px;
-}
 
-.modal-content {
-    background-color: #ffffff;
-    margin: auto;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    width: 90%;
-    max-width: 400px;
-    text-align: center;
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 1.5rem;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close:hover {
-    color: #000;
-}
 
 .flds-filters{
     margin: 3%;
     border: none;
+    display: flex;
+    flex-direction: row;
+    position: sticky;
+    width: 100%;
+    top: 0;
+    background-color: #E9ECEF;
+    z-index: 1;
+}
+
+#order {
+    margin-right: 23px;
+}
+ .flds-filters > div{
+    margin: 0 3%;
 }
 
 .flds-search{
     border: none;
 }
 
-
+.new-word{
+    margin-top: 1rem;
+}
 
 @media (max-width: 768px) {
     main {

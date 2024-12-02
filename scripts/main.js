@@ -1,151 +1,154 @@
 import { dictionarys } from "./dictionary.js";
 
-const showModal = (message) => {
-    const modal = document.getElementById("alertModal");
-    const modalMessage = document.getElementById("modalMessage");
-    modalMessage.textContent = message;
-    modal.style.display = "block";
-};
+if (!localStorage.getItem("dictionarys")) {
+  localStorage.setItem("dictionarys", JSON.stringify(dictionarys));
+}
 
-const closeModal = () => {
-    const modal = document.getElementById("alertModal");
-    modal.style.display = "none";
-};
+let dictionary = JSON.parse(localStorage.getItem("dictionarys"))
+
+const showWords = () => {
+  const allWordsSection = document.getElementById("allWords");
+  allWordsSection.innerHTML = "";
+
+  const categoryValue = document.getElementById("orderByCategoryTable").value;
+
+  const table = document.createElement("table");
+  table.classList.add("words-table");
+
+  const headerRow = document.createElement("tr");
+
+  headerRow.innerHTML = `
+      <th>ID</th>
+      <th>English</th>
+      <th>Spanish</th>
+      <th>Example</th>
+  `;
+  table.appendChild(headerRow);
 
 
-document.getElementById("closeModal").addEventListener("click", closeModal);
-window.addEventListener("click", (event) => {
-    const modal = document.getElementById("alertModal");
-    if (event.target === modal) {
-        closeModal();
-    }
-});
-
-document.getElementById("translater").addEventListener("click", () => {
-    const inputWord = document.getElementById("wordInput").value.trim();
-    const selectedLanguage = document.getElementById("lenguage").value;
-
-    if (!inputWord || !selectedLanguage) {
-        showModal("Please complete all fields.");
-        return;
-    }
-
-    const result = searchWord(dictionarys, inputWord, selectedLanguage);
-    const translatedWordSection = document.getElementById("translated-word");
-    translatedWordSection.innerHTML = "";
-
-    if (result) {
-        const table = document.createElement("table");
-        table.classList.add("result-table");
-
-        const headerRow = document.createElement("tr");
-        headerRow.innerHTML = `
-            <th>English</th>
-            <th>Spanish</th>
-            <th>Example</th>
-            <th>Category</th>
-        `;
-        table.appendChild(headerRow);
-
+  if (categoryValue == "all") {
+    headerRow.innerHTML = `
+      <th>ID</th>
+      <th>English</th>
+      <th>Spanish</th>
+      <th>Example</th>
+      <th>Category</th>
+  `;
+    for (const category in dictionary.categories) {
+      dictionary.categories[category].forEach((word) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-            <td>${result.english}</td>
-            <td>${result.spanish}</td>
-            <td>${result.example}</td>
-            <td>${Object.keys(dictionarys.categories).find((key) =>
-                dictionarys.categories[key].includes(result)
-            )}</td>
-        `;
+        <td>${word.id}</td>
+        <td>${word.english}</td>
+        <td>${word.spanish}</td>
+        <td>${word.example}</td>
+        <td>${category}</td>
+      `;
         table.appendChild(row);
-
-        translatedWordSection.appendChild(table);
-    } else {
-        showModal("Word not found.");
+      });
     }
-});
-
-
-const searchWord = (dictionary, word, language) => {
-    const isEnglishToSpanish = language === "englishToSpanish";
-    const searchKey = isEnglishToSpanish ? "english" : "spanish";
-
-    for (const category in dictionary.categories) {
-        const foundWord = dictionary.categories[category].find((entry) =>
-            entry[searchKey].toLowerCase() === word.toLowerCase()
-        );
-        if (foundWord) return foundWord;
-    }
-
-    return null;
-};
-
-const showAll = (dictionary) => {
-    const allWordsSection = document.getElementById("allWords");
-    allWordsSection.innerHTML = "";
-
-    const table = createTableWithWords(dictionary, null);
-    allWordsSection.appendChild(table);
-};
-
-const renderCategory = (dictionary, id) => {
-    const selectCategory = document.getElementById(id);
-    for (const key in dictionary.categories) {
-        const category = document.createElement("option");
-        category.value = key;
-        category.textContent = key;
-        category.classList.add("optionCategories");
-        selectCategory.appendChild(category);
-    }
-
-    selectCategory.addEventListener("change", (event) => {
-        const selectedCategory = event.target.value;
-        showCategory(dictionary, selectedCategory);
-    });
-};
-
-
-const showCategory = (dictionary, category, sortKey = "english", sortOrder = "asc") => {
-    const allWordsSection = document.getElementById("allWords");
-    allWordsSection.innerHTML = "";
-
-    const table = createTableWithWords(dictionary, category, sortKey, sortOrder);
-    allWordsSection.appendChild(table);
-};
-
-const setupSortSelect = (dictionary) => {
-  const sortOrderSelect = document.getElementById("sortOrder");
-
-  sortOrderSelect.addEventListener("change", (event) => {
-      const sortOrder = event.target.value;
-      const allWordsSection = document.getElementById("allWords");
-      allWordsSection.innerHTML = "";
-
-      const table = createTableWithWords(dictionary, null, "english", sortOrder);
-      allWordsSection.appendChild(table);
-  });
-};
-
-const createTableWithWords = (dictionary, category, sortKey = "english", sortOrder = "asc") => {
-  let words = [];
-
-  if (category && dictionary.categories[category]) {
-      words = [...dictionary.categories[category]];
   } else {
-      for (const cat in dictionary.categories) {
-          words = words.concat(dictionary.categories[cat]);
-      }
+    dictionary.categories[categoryValue].forEach((word) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${word.id}</td>
+        <td>${word.english}</td>
+        <td>${word.spanish}</td>
+        <td>${word.example}</td>
+      `;
+      table.appendChild(row);
+    });
+  }
+  allWordsSection.appendChild(table);
+}
+
+const renderCategory = (idSelect) => {
+  const selectCategory = document.getElementById(idSelect);
+  for (const key in dictionary.categories) {
+    const category = document.createElement("option");
+    category.value = key;
+    category.textContent = key;
+    category.classList.add("optionCategories")
+    selectCategory.appendChild(category);
+  }
+}
+
+const addword = () => {
+  const english = document.getElementById("english").value;
+  const spanish = document.getElementById("spanish").value;
+  const example = document.getElementById("example").value;
+  const categoryValue = document.getElementById("orderByCategoryForm").value;
+
+  if (!english || !spanish || !example || !categoryValue) {
+    alert("All fields are required!");
+    return;
   }
 
-  words.sort((a, b) => {
-      if (sortOrder === "asc") {
-          if (a[sortKey] < b[sortKey]) return -1;
-          if (a[sortKey] > b[sortKey]) return 1;
-      } else if (sortOrder === "desc") {
-          if (a[sortKey] < b[sortKey]) return 1;
-          if (a[sortKey] > b[sortKey]) return -1;
+  const newWord = {
+    "id": dictionary.categories[categoryValue].length + 1,
+    "english": english,
+    "spanish": spanish,
+    "example": example
+  }
+  dictionary.categories[categoryValue].push(newWord);
+  localStorage.setItem('dictionarys', JSON.stringify(dictionary));
+
+  const validator = validatorWord(english, spanish, "all");
+  if (validator > 1) {
+    alert("This word already exists in the dictionary");
+  } else {
+    alert("Word added successfully");
+  }
+  showWords();
+
+  console.log(dictionary.categories[categoryValue]);
+
+
+}
+
+const validatorWord = (wordEnglish, wordSpanish, mode) => {
+  let validator = 0;
+  for (const key in dictionary.categories) {
+    dictionary.categories[key].forEach((word) => {
+      const english = word.english;
+      const spanish = word.spanish;
+
+      if (mode === "all") {
+        if (
+          wordEnglish &&
+          wordSpanish &&
+          english.toLowerCase() === wordEnglish.toLowerCase() &&
+          spanish.toLowerCase() === wordSpanish.toLowerCase()
+        ) {
+          validator++;
+        }
+      } else if (mode === "EnTSp") {
+        if (wordEnglish && english.toLowerCase() === wordEnglish.toLowerCase()) {
+          validator++;
+        }
+      } else if (mode === "SpTEn") {
+        if (wordSpanish && spanish.toLowerCase() === wordSpanish.toLowerCase()) {
+          validator++;
+        }
       }
-      return 0;
-  });
+    });
+  }
+  return validator;
+};
+
+
+const translaterWord = () => {
+  const containerTranslate = document.getElementById("translated-word");
+  containerTranslate.innerHTML = "";
+
+  const wordToTranslate = document.getElementById("wordInput").value.trim();
+  const mode = document.getElementById("lenguage").value;
+
+  // Validar campos requeridos
+  if (!wordToTranslate || !mode) {
+    alert("Please enter a word and select a language mode!");
+    return;
+  }
 
   const table = document.createElement("table");
   table.classList.add("words-table");
@@ -159,71 +162,64 @@ const createTableWithWords = (dictionary, category, sortKey = "english", sortOrd
   `;
   table.appendChild(headerRow);
 
-  words.forEach((word) => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-          <td>${word.id}</td>
-          <td>${word.english}</td>
-          <td>${word.spanish}</td>
-          <td>${word.example}</td>
-      `;
-      table.appendChild(row);
-  });
+  let validator = 0;
+  let validatorRows = 0;
 
-  return table;
+  if (mode === "EnTSp") {
+    validator = validatorWord(wordToTranslate, undefined, "EnTSp");
+  } else if (mode === "SpTEn") {
+    validator = validatorWord(undefined, wordToTranslate, "SpTEn");
+  }
+
+  // Buscar coincidencias en el diccionario
+  if (validator > 0) {
+    for (const key in dictionary.categories) {
+      dictionary.categories[key].forEach((word) => {
+        const english = word.english.toLowerCase();
+        const spanish = word.spanish.toLowerCase();
+
+        if (
+          (mode === "EnTSp" && english === wordToTranslate.toLowerCase()) ||
+          (mode === "SpTEn" && spanish === wordToTranslate.toLowerCase())
+        ) {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${word.id}</td>
+            <td>${word.english}</td>
+            <td>${word.spanish}</td>
+            <td>${word.example}</td>
+          `;
+          table.appendChild(row);
+          validatorRows++;
+        }
+      });
+    }
+  }
+
+  if (validatorRows === 0) {
+    const noResultsRow = document.createElement("tr");
+    noResultsRow.innerHTML = `
+      <td colspan="4">No matches found for the entered word and selected language mode.</td>
+    `;
+    table.appendChild(noResultsRow);
+  }
+
+  containerTranslate.appendChild(table);
 };
 
 
-
-document.getElementById("addWord").addEventListener("click", () => {
-  const englishInput = document.getElementById("english").value.trim();
-  const spanishInput = document.getElementById("spanish").value.trim();
-  const exampleInput = document.getElementById("example").value.trim();
-  const categorySelect = document.getElementById("orderByCategoryTable").value;
-
-  if (!englishInput || !spanishInput || !exampleInput || !categorySelect) {
-      showModal("Please complete all fields.");
-      return;
-  }
-
-
-  const newWord = {
-      id: new Date().getTime().toString(), 
-      english: englishInput,
-      spanish: spanishInput,
-      example: exampleInput,
-  };
-
-
-  if (!dictionarys.categories[categorySelect]) {
-      dictionarys.categories[categorySelect] = [];
-  }
-  dictionarys.categories[categorySelect].push(newWord);
-
-  
-  showCategory(dictionarys, categorySelect);
-
-  
-  document.getElementById("addWordForm").reset();
-  showModal("Word added successfully!");
-});
+document.getElementById("orderByCategoryTable").addEventListener("change", () => showWords());
+document.getElementById("addWord").addEventListener("click", () => addword());
+document.getElementById("translaterButton").addEventListener("click", () => translaterWord());
 
 
 
-document.getElementById("orderByAlphabet").addEventListener("change", (event) => {
-  const [sortKey, sortOrder] = event.target.value.split("-");
-  const allWordsSection = document.getElementById("allWords");
-  allWordsSection.innerHTML = "";
 
-  
-  showCategory(dictionarys, null, sortKey, sortOrder);
-});
 
 document.addEventListener("DOMContentLoaded", () => {
-    showAll(dictionarys);
-    renderCategory(dictionarys, "orderByCategoryTable");
-    renderCategory(dictionarys, "orderByCategoryForm");
-    setupSortSelect(dictionarys);
+  renderCategory("orderByCategoryTable");
+  renderCategory("orderByCategoryForm");
+  showWords();
 });
 
 
